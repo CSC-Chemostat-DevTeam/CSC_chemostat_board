@@ -3,10 +3,10 @@
 
 #include <Arduino.h>
 #include <SD.h>
-#include "1_config.h"
-#include "3_SubSystem.h"
-#include "3_concurrent_task.h"
-#include "3_concurrent_task.h"
+#include "Base/1_config.h"
+#include "Base/3_SubSystem.h"
+#include "Base/3_concurrent_task.h"
+#include "Base/3_concurrent_task.h"
 
 // A SUBSYSTEM FOR TRANFERING DATA TO THE PC
 class UploaderSubsystem :

@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 // ----------------------------------------------------
-// TODO: Add an 'info' function to print stuff
+// TODO: Add an 'info' 'warn' 'error' function to print stuff
 
 // ----------------------------------------------------
 class SubSystem{

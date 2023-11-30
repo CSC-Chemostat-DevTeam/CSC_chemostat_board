@@ -1,5 +1,5 @@
-#include "2_utils.h"
-#include "3_StaticString.h"
+#include "Base/2_utils.h"
+#include "Base/3_StaticString.h"
 
 // ----------------------------------------------------
 // CONSTRUCTOR

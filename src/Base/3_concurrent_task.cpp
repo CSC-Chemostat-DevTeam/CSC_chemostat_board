@@ -1,5 +1,5 @@
-#include "1_config.h"
-#include "3_concurrent_task.h"
+#include "Base/1_config.h"
+#include "Base/3_concurrent_task.h"
 
 ConcurrentTask::ConcurrentTask() { 
 	reset();

@@ -1,9 +1,9 @@
 #ifndef BOTTOM_SUBSYSTEM_H
 #define BOTTOM_SUBSYSTEM_H
 
-#include "1_config.h"
-#include "3_SubSystem.h"
-#include "3_Timer.h"
+#include "Base/1_config.h"
+#include "Base/3_SubSystem.h"
+#include "Base/3_Timer.h"
 
 // TODO move subsystems to namespaces
 class BottomSubsystem :

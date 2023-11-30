@@ -2,10 +2,10 @@
 #define CMD_SUBSYSTEM_H
 
 #include <SD.h>
-#include "3_Timer.h"
-#include "3_SubSystem.h"
-#include "3_concurrent_task.h"
-#include "3_KVReader.h"
+#include "Base/3_Timer.h"
+#include "Base/3_SubSystem.h"
+#include "Base/3_concurrent_task.h"
+#include "Base/3_KVReader.h"
 
 #define CMD_INPUT_TIMEOUT 300 // ms
 

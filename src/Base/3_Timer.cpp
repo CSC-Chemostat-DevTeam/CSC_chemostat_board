@@ -1,5 +1,6 @@
-#include "1_config.h"
-#include "3_Timer.h"
+#include "Base/1_config.h"
+#include "Base/1_constants.h"
+#include "Base/3_Timer.h"
 
 Timer::Timer(unsigned long period, byte mode) { 
     this->mode = mode;

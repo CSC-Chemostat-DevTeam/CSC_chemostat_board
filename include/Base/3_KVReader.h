@@ -2,7 +2,7 @@
 #define KV_READER_H
 
 #include <Arduino.h>
-#include "3_StaticString.h"
+#include "Base/3_StaticString.h"
 
 // TODO: rename
 // Example $progkey:PUBLIC%

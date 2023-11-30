@@ -5,10 +5,10 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-#include <3_Timer.h>
-#include "3_SubSystem.h"
-#include "3_SubSystem.h"
-#include <4_datalogger_subsystem.h>
+#include "Base/3_Timer.h"
+#include "Base/3_SubSystem.h"
+#include "Base/3_SubSystem.h"
+#include "4_datalogger_subsystem.h"
 
 // A class to handle the temperature control
 class TControlSubsystem :
