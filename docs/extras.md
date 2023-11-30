@@ -1,0 +1,3 @@
+- cables | [link](https://www.amazon.com/Elegoo-EL-CP-004-Multicolored-Breadboard-arduino/dp/B01EV70C78?psc=1&pd_rd_w=3dTu2&pf_rd_p=c9b3a448-7c3c-4399-ac60-2bdc98844f72&pf_rd_r=AM01CNZ1W1SGX9V5KS8H&pd_rd_r=527377dd-a330-4203-b019-5817de38ca2c&pd_rd_wg=vN8nH&ref_=sspa_dk_rhf_detail_pt_sub_15&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEyWE81SUc2RkcwNUYmZW5jcnlwdGVkSWQ9QTAxMzUyNzRVUDNTNktGTUtDVEsmZW5jcnlwdGVkQWRJZD1BMDY2NjMyNkNaSzJFSEE5RjVYWiZ3aWRnZXROYW1lPXNwX3JoZl9kZXRhaWwmYWN0aW9uPWNsaWNrUmVkaXJlY3QmZG9Ob3RMb2dDbGljaz10cnVl)
+
+- Cable Ties | [link](https://www.amazon.com/TR-Industrial-TR88301-Multi-Purpose-Cable/dp/B01018DB2E/ref=sr_1_1?dchild=1&keywords=mini+zip+ties&qid=1635230808&sr=8-1)
