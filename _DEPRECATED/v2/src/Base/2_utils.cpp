@@ -1,10 +1,7 @@
 #include <Arduino.h>
 
 #include "Base/1_config.h"
-#include "Base/2_utils.h"
 
-//  --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-// SHOW
 void _show_name(const char name[]){
     Serial.print(name);
     Serial.print(" = ");
@@ -89,7 +86,6 @@ void show(const char name[], const Printable& val) {
 }
 
 
-//  --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 // Hashing
 // from: https://forum.arduino.cc/t/simple-checksum-that-a-noob-can-use/300443/3
 // TOSYNC
@@ -106,4 +102,3 @@ unsigned int crc16_hash(unsigned int crc, char c){
   }
   return crc;
 }
-

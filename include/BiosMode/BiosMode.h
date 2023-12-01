@@ -1,3 +1,15 @@
-// A basic mode for dealing restar time... 
-// It will load the current mode from SD (if present)
-// or will stand by...
+#ifndef BIOS_MODE_H
+#define BIOS_MODE_H
+
+#include "Base/0_Base.h"
+
+class Bios : 
+    public Chemostat 
+{
+    private: 
+    public: 
+};
+
+
+
+#endif // BIOS_MODE_H 

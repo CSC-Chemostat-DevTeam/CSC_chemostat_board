@@ -9,7 +9,6 @@ class StaticString{
     private:
         int idx;
         char* buffer;
-        // char buffer[BUFFERED_STRING_BUFFER_LEN];
 
     public:
         // ----------------------------------------------------

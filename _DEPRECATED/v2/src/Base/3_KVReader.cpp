@@ -2,8 +2,6 @@
 #include "Base/3_KVReader.h"
 
 KVReader::KVReader(){
-    // Serial.println(">>> At KVReader::KVReader <<<");
-    
     // parser state
     this->init_found = false;
     this->sep_found = false;
