@@ -4,11 +4,14 @@
 // foward declaration
 class AbsHandler;
 class CmdHandler;
+class SerialHandler;
 
 #define HANDLERS_BUFFER_SIZE 32
 
 // TODO: make a sayHi system for tracking obj pointers
 // To see why they change with time
+
+// TODO: use 'cost' stuff whn required
 
 class Chemostat {
     private: 
@@ -18,6 +21,7 @@ class Chemostat {
         // ----------------------------------------------------
         // HANDLERS
         CmdHandler* pCMD;
+        SerialHandler* pSERIAL;
 
         // ----------------------------------------------------
         // CONSTRUCTOR
@@ -31,7 +35,7 @@ class Chemostat {
 
         // ----------------------------------------------------
         // CMD INTERFACE
-        boolean execCmd(String& key, String& val);
+        boolean execCmd();
         
         // ----------------------------------------------------
         // ALL CALLERS

@@ -107,3 +107,16 @@ unsigned int crc16_hash(unsigned int crc, char c){
   return crc;
 }
 
+unsigned int crc16_hash(unsigned int crc, String str){
+    for (unsigned int i = 0; i < str.length(); i++) {
+        crc = crc16_hash(crc, str.charAt(i));
+    }
+    return crc;
+}
+
+// ----------------------------------------------------
+// Returns "" if prefix does not match
+String _parseSuffix(String& key, const String& prefix){
+    if (!key.startsWith(prefix)) { return ""; }
+    return key.substring(prefix.length());
+}

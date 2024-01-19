@@ -1,7 +1,9 @@
 #include <Arduino.h>
 
 #include "Base/1_config.h"
+#include "Base/2_utils.h"
 #include "Base/3_CmdHandler.h"
+#include "Base/3_SerialHandler.h"
 #include "Base/3_Chemostat.h"
 
 // ----------------------------------------------------
@@ -12,6 +14,7 @@ Chemostat::Chemostat() {
 
     // HANDLERS
     this->pCMD = new CmdHandler(this); // TODO: [HEAP] Check proper free/delete
+    this->pSERIAL = new SerialHandler(this); // TODO: [HEAP] Check proper free/delete
     
     // CALLERS INTERFACES
     /// CMD INTERFACE
@@ -22,15 +25,18 @@ Chemostat::Chemostat() {
 
 // ----------------------------------------------------
 // CMD INTERFACE
-boolean Chemostat::execCmd(String& cmd, String& val) {
+boolean Chemostat::execCmd() {
 
-    // Serial.println(">>> Chemostat::execCmd <<<");
+    CmdHandler* const pCMD = this->pCMD;
 
-    if (cmd.equals("TEST-CMD")) {
-        Serial.print("Hi from Chemostat ");
-        Serial.println((int) this);
+    // EQUAL
+    if (pCMD->hasKey("TEST-CMD")) {
+        pCMD->response("Hi from Chemostat ", (int) this);
         return true;
     }
+
+    // Prefix Depedent
+    if (pCMD->hasKeyPrefix("CH-")) { return false; }
 
     return false;
 }
@@ -42,39 +48,44 @@ boolean Chemostat::execCmd(String& cmd, String& val) {
 void Chemostat::execAllCmd(){
 
     // Serial.println(">>> Chemostat::execAllCmd <<<");
+    CmdHandler* const pCMD = this->pCMD;
 
     // no cmd is a noop
-    if (!this->pCMD->hasCmd()) { return; }
+    if (!this->pCMD->hasValidCmd()) { return; }
 
-    // Get cmd data
-    String key = this->pCMD->getCmdKey();
-    String val = this->pCMD->getCmdVal();
+    // Open response
+    pCMD->open_response(); 
 
     // call myself
-    if (this->execCmd(key, val)) { return; }
+    if (this->execCmd()) { 
+        // close response
+        pCMD->close_response(); 
+        return; 
+    }
 
     // call handlers
     for (int i = 0; i < HANDLERS_BUFFER_SIZE; i++) {
         if (_CMD_HANDLERS_BUFFER[i] == NULL){ break; }
-        if (_CMD_HANDLERS_BUFFER[i]->execCmd(key, val)) { break; }
+        if (_CMD_HANDLERS_BUFFER[i]->execCmd()) { 
+            // close response
+            pCMD->close_response(); 
+            return; 
+        }
     }
+
+    // fallback
+    pCMD->response("ERROR, UNKNOWN COMMAND");
+    // close response
+    pCMD->close_response();
 
 }
 
 void Chemostat::pushCmdHandler(AbsHandler* h) {
-    // TODO: fix cmd handling
-    // Serial.println(">>> Chemostat::pushCmdHandler <<< ");
     for (int i = 0; i < HANDLERS_BUFFER_SIZE; i++) {
-        // Serial.print("i "); Serial.print(i);
         if (_CMD_HANDLERS_BUFFER[i] != NULL){ continue; }
         _CMD_HANDLERS_BUFFER[i] = h;
-        // Serial.print(", _CMD_HANDLERS_BUFFER[i] ");
-        // Serial.print((unsigned int)_CMD_HANDLERS_BUFFER[i]);
         if (i+1 == HANDLERS_BUFFER_SIZE) { break; }
         _CMD_HANDLERS_BUFFER[i+1] = NULL;
-        // Serial.print(", _CMD_HANDLERS_BUFFER[i+1] ");
-        // Serial.print((unsigned int)_CMD_HANDLERS_BUFFER[i+1]);
-        // Serial.println();
         break;
     }
 }
@@ -84,10 +95,23 @@ void Chemostat::pushCmdHandler(AbsHandler* h) {
 void Chemostat::onsetup(){
     // Serial.println(">>> Chemostat::onsetup <<<");
 
+    // ---------------------
     // CHEMOSTAT SETUP
 
-    // CALL HANDLERS SETUP
+    // ---------------------
+    // SETUP HANDLERS
+
     this->pCMD->onsetup();
+    this->pSERIAL->onsetup();
+
+    // ---------------------
+    // BANNER
+    pSERIAL->println("");
+    pSERIAL->println("----------------------");
+    pSERIAL->println(" WELCOME TO CSC-CHEMOSTAT");
+    pSERIAL->println(" info at https://github.com/josePereiro/CSC_chemostat_board");
+    pSERIAL->println("----------------------");
+    pSERIAL->println("");
 }
     
 void Chemostat::onloop(){
@@ -97,4 +121,5 @@ void Chemostat::onloop(){
 
     // CALL HANDLERS ONLOOPS
     this->pCMD->onloop();
+    this->pSERIAL->onloop();
 }

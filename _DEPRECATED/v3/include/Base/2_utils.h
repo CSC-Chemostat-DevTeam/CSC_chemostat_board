@@ -27,6 +27,7 @@ void show(const char name[], const Printable& val);
 //  --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 // Hashing
 unsigned int crc16_hash(unsigned int crc, char c);
+unsigned int crc16_hash(unsigned int crc, String str);
 
 //  --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 // My printing
@@ -55,18 +56,6 @@ template <typename First, typename... Args>
 void _println(First first, Args... args) {
     _print(first); 
     _println(args...);
-}
-
-template <typename First, typename... Args>
-void _log(First tag, Args... args) {
-    _println(">>> ", tag, ":"); 
-    _println(args...);
-    _println("<<<"); 
-}
-
-template <typename First, typename... Args>
-void _info(First arg0, Args... args) {
-    _log("INFO", arg0, args...);
 }
 
 #endif // UTILS_H

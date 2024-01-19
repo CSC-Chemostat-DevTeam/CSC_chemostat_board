@@ -9,19 +9,6 @@
 Chemostat* pCH; // TODO: [POINTER] Check proper free/delete
 
 void setup() {
-  // Create a Serial System?
-  Serial.begin(IO_BAUDRATE);
-  while (!Serial) {
-    ;  // wait for serial port to connect. Needed for native USB port only
-  }
-  
-  // BANNER
-  Serial.println("");
-  Serial.println("----------------------");
-  Serial.println(" WELCOME TO CSC-CHEMOSTAT");
-  Serial.println(" info at https://github.com/josePereiro/CSC_chemostat_board");
-  Serial.println("----------------------");
-  Serial.println();
 
   // DEV
   pCH = new Chemostat(); // TODO: [HEAP] Check proper free/delete
@@ -31,9 +18,12 @@ void setup() {
 
 void loop() {
   pCH->onloop();
+  // DEV
+  pCH->pCMD->request("KAKA");
 }
 
-
+// RAM:   [=         ]   8.4% (used 692 bytes from 8192 bytes)
+// Flash: [          ]   3.7% (used 9354 bytes from 253952 bytes)
 
 
 

@@ -3,13 +3,12 @@
 
 #include <Arduino.h>
 
-const byte BUFFERED_STRING_BUFFER_LEN = 128;
+#define BUFFERED_STRING_BUFFER_LEN 128
 
 class StaticString{
     private:
         int idx;
-        char* buffer;
-        // char buffer[BUFFERED_STRING_BUFFER_LEN];
+        char buffer[BUFFERED_STRING_BUFFER_LEN];
 
     public:
         // ----------------------------------------------------

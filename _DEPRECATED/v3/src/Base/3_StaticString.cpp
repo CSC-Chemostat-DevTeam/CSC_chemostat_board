@@ -4,12 +4,10 @@
 // ----------------------------------------------------
 // CONSTRUCTOR
 StaticString::StaticString() {
-    this->buffer = (char*) malloc(BUFFERED_STRING_BUFFER_LEN);
     this->reset();
 }
 
 StaticString::StaticString(String& str) {
-    this->buffer = (char*) malloc(BUFFERED_STRING_BUFFER_LEN);
     this->reset();
     for (unsigned int i = 0; i < str.length(); i++) {
         this->push(str.charAt(i));

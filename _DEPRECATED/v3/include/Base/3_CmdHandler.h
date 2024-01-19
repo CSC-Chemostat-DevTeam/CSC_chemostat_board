@@ -2,9 +2,10 @@
 #define CMD_HANDLER_H
 
 #include <SD.h>
+#include "Base/2_utils.h"
 #include "Base/3_AbsHandler.h"
-#include "Base/3_ConcurrentTask.h"
 #include "Base/3_KVReader.h"
+#include "Base/3_SerialHandler.h"
 #include "Base/3_Chemostat.h"
 
 #define CMD_INPUT_TIMEOUT 300 // ms
@@ -15,6 +16,7 @@ class CmdHandler :
 {       
 	private:
 		KVReader kvreader;
+		unsigned long respcount;
 
 	public:
 
@@ -30,7 +32,7 @@ class CmdHandler :
 
 		// ----------------------------------------------------
         // CMD INTERFACE
-		boolean execCmd(String& key, String& val);
+		virtual boolean execCmd();
 
 		// ----------------------------------------------------
         // CMD INTERFACE 2
@@ -42,7 +44,8 @@ class CmdHandler :
 
 			\return void
 		*/
-		void receive_cmd(unsigned long tout);
+		void tryReadCmd(unsigned long tout);
+		void reset();
 
 		unsigned int cmdhash();
 
@@ -60,12 +63,31 @@ class CmdHandler :
 			get the current val as String.
 		*/
 		String getCmdVal();
+		String getCmdVal0();
+		String getCmdVal1();
+		String getCmdVal2();
 
-		boolean hasCmd();
+		boolean hasValidCmd();
+		unsigned int cmdHash();
+		String cmdKvString();
+
+		boolean hasKey(const String& str);
+		boolean hasKeyPrefix(const String& prefix);
+		boolean hasKeySuffix(const String& suffix);
+
+		// ----------------------------------------------------
+		// RESPONSE INTERFACE
+		template <typename T0, typename... Ts>
+		void response(T0 arg0, Ts... args) {
+			this->Ch->pSERIAL->println(this->respcount, " | ", arg0, args...);
+			this->respcount++;
+		};
+		void open_response();
+		void close_response();
+
+		// ----------------------------------------------------
+		// REQUEST INTERFACE
+		boolean request(String req);
 };
-
-// ----------------------------------------------------
-// Static Tools
-String _parseCmdString(String& key, const String& prefix);
 
 #endif // CMD_HANDLER_H

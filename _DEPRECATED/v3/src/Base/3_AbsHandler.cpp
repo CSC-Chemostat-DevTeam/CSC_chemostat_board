@@ -1,4 +1,7 @@
 #include "Base/3_AbsHandler.h"
+#include "Base/3_CmdHandler.h"
+
+// foward declare
 
 // ----------------------------------------------------
 // CONSTRUCTORS
@@ -38,33 +41,34 @@ boolean AbsHandler::isEnable(){
 
 // ----------------------------------------------------
 // CMD INTERFACE
-boolean AbsHandler::execCmd(String& cmd, String& val){
+boolean AbsHandler::execCmd(){
 
     // Serial.println(">>> At AbsHandler::execCmd <<<");
 
+    CmdHandler* const pCMD = this->Ch->pCMD;
+
     // --------------------
-    // ENABLE INTERFACE
-    if (cmd.equals("GET-EN")) {
-        Serial.print("enable: ");
-        Serial.println(this->_enable());
+    // Suffixes
+
+    /// --------------------
+    /// ENABLE INTERFACE
+    if (pCMD->hasKeySuffix("GET-EN")) {
+        pCMD->response("enable: ", this->_enable());
         return true;
     }
-    if (cmd.equals("SET-EN")) {
-        this->Enable(val.toInt() != 0);
-        Serial.print("enable: ");
-        Serial.println(this->_enable());
+    if (pCMD->hasKeySuffix("SET-EN")) {
+        this->Enable(pCMD->getCmdVal().toInt() != 0);
+        pCMD->response("enable: ", this->_enable());
         return true;
     }
     // enable0
-    if (cmd.equals("GET-EN0")) {
-        Serial.print("enable0: ");
-        Serial.println(this->_enable0());
+    if (pCMD->hasKeySuffix("GET-EN0")) {
+        pCMD->response("enable0: ", this->_enable0());
         return true;
     }
-    if (cmd.equals("SET-EN0")) {
-        this->Enable0(val.toInt() != 0);
-        Serial.print("enable0: ");
-        Serial.println(this->_enable0());
+    if (pCMD->hasKeySuffix("SET-EN0")) {
+        this->Enable0(pCMD->getCmdVal().toInt() != 0);
+        pCMD->response("enable0: ", this->_enable0());
         return true;
     }
     return false;

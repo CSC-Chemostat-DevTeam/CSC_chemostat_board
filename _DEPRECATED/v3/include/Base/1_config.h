@@ -105,9 +105,9 @@
 #define DO_DRY_RUN_FLAG_DFLT_VAL              true
 #define DO_LASER_PWD_VAL_DFLT_VAL             190
 #define DO_ACTION_PERIOD_DFLT_VAL             10000 // (ms)
-#define DO_LEDS_SAMPLING_TIME_DFLT_VAL        50 // (ms) 
-#define DO_MAX_PER_PULSE_TIMEOUT_DFLT_VAL     10 // (assert do_leds_per_pulse_timeout < do_leds_sampling_time) (ms)
-#define DO_BUFFER_TIME_DFLT_VAL               500 // (ms) 
+#define DO_LEDS_SAMPLING_TIME_DFLT_VAL        50    // (ms) 
+#define DO_MAX_PER_PULSE_TIMEOUT_DFLT_VAL     10    // (assert do_leds_per_pulse_timeout < do_leds_sampling_time) (ms)
+#define DO_BUFFER_TIME_DFLT_VAL               500   // (ms) 
 
 // ----------------------------------------------------------------------------
 // SD SUBSYSTEM

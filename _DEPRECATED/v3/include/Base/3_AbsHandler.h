@@ -30,7 +30,7 @@ class AbsHandler {
 
     // ----------------------------------------------------
     // CMD INTERFACE
-    virtual boolean execCmd(String& key, String& val);
+    virtual boolean execCmd();
 
     // ----------------------------------------------------
     // TEST INTERFACE
