@@ -16,6 +16,7 @@ class SerialHandler;
 class Chemostat {
     private: 
         AbsHandler* _MSG_HANDLERS_BUFFER[CHEMOSTAT_HANDLERS_BUFFER_SIZE];
+        AbsHandler* _ALL_HANDLERS_BUFFER[CHEMOSTAT_HANDLERS_BUFFER_SIZE];
 
     public:
         // ----------------------------------------------------
@@ -34,7 +35,7 @@ class Chemostat {
         void onloop();
 
         // ----------------------------------------------------
-        // TEST INTERFACE
+        // _DEV INTERFACE
         String getClassName();
         void sayHi();
 
@@ -48,12 +49,20 @@ class Chemostat {
         String nowTimeTag();
         
         // ----------------------------------------------------
-        // ALL CALLERS
+        // HANDLERS INTERFACE
 
         // MSG INTERFACE
         void handleAllMsgs();
         void pushMsgHandler(AbsHandler* h);
+
+        void pushHandler(AbsHandler* h);
+        
+        // ----------------------------------------------------
+        // OTHERS
+        void printWelcome();
 };
 
+
+void _pushHandler(AbsHandler* buffer[], AbsHandler* h);
 
 #endif // CHEMOSTAT_H

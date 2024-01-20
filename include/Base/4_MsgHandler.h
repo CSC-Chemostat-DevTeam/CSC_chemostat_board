@@ -5,12 +5,14 @@
 #include "Base/2_utils.h"
 #include "Base/3_AbsHandler.h"
 #include "Base/3_CSVLineReader.h"
-#include "Base/3_SerialHandler.h"
-#include "Base/3_Chemostat.h"
+#include "Base/4_SerialHandler.h"
+#include "Base/4_Chemostat.h"
 
-#define TRY_READ_MSG_TIMEOUT 300 // ms
+// ----------------------------------------------------
+// All parseble msgs between the PC and the board must be 
+// handle by this class
+// ----------------------------------------------------
 
-// A subsystem for reciving and executing commands from a PC
 class MsgHandler :
     public AbsHandler
 {       
@@ -34,7 +36,7 @@ class MsgHandler :
 		void onloop();
 
 		// ----------------------------------------------------
-        // TEST INTERFACE
+        // _DEV INTERFACE
         String getClassName();
 
 		// ----------------------------------------------------
@@ -102,8 +104,20 @@ class MsgHandler :
 			this->sendMsg("RES", this->hash, this->respcount, arg0, args...);
 			this->respcount++;
 		};
+		void sendMsgResponse() { this->respcount++; } // empty response
 		void openMsgResponse();
 		void closeMsgResponse();
+
+		// ----------------------------------------------------
+		template <typename T0, typename... Ts>
+		void sendMsgAcknowladge(T0 arg0, Ts... args) {
+			this->Ch->pMSG->sendMsg(
+				MSG_ACKNOWLADGE_TOKEN,
+				this->Ch->pMSG->hash, 
+				this->Ch->nowTimeTag(),
+				arg0, args...
+			);
+		}
 
 		// ----------------------------------------------------
 		// REQUEST INTERFACE

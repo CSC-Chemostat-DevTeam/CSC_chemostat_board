@@ -1,6 +1,6 @@
 #include "Base/2_utils.h"
 #include "Base/3_AbsHandler.h"
-#include "Base/3_MsgHandler.h"
+#include "Base/4_MsgHandler.h"
 
 
 // ----------------------------------------------------
@@ -37,43 +37,55 @@ boolean AbsHandler::isEnable(){
     return true;
 }
 
+// ----------------------------------------------------
+// SKETCH INTERFACE
+void onsetup() {;}
+void onloop() {;}
+
 // // ----------------------------------------------------
 // MSG INTERFACE
 boolean AbsHandler::handleMsg(){
 
     // Serial.println(">>> At AbsHandler::handleMsg <<<");
 
-    // MsgHandler* const pMSG = this->Ch->pMSG;
+    MsgHandler* const pMSG = this->Ch->pMSG;
 
     // --------------------
-    // Suffixes
+    // CMDS
+    // All AbsHandler are placed on Val1 so Val0 is for subclasses
 
-    // /// --------------------
-    // /// ENABLE INTERFACE
-    // if (pMSG->hasValStringSuffix("GET-EN")) {
-    //     pMSG->sendMsgResponse("enable: ", this->_enable());
-    //     return true;
-    // }
-    // if (pMSG->hasValStringSuffix("SET-EN")) {
-    //     this->Enable(pMSG->getCmdVal().toInt() != 0);
-    //     pMSG->sendMsgResponse("enable: ", this->_enable());
-    //     return true;
-    // }
-    // // enable0
-    // if (pMSG->hasValStringSuffix("GET-EN0")) {
-    //     pMSG->sendMsgResponse("enable0: ", this->_enable0());
-    //     return true;
-    // }
-    // if (pMSG->hasValStringSuffix("SET-EN0")) {
-    //     this->Enable0(pMSG->getCmdVal().toInt() != 0);
-    //     pMSG->sendMsgResponse("enable0: ", this->_enable0());
-    //     return true;
-    // }
+    // if (pMSG->hasValString(1, "ECHO")) {
+
+    /// --------------------
+    /// ENABLE INTERFACE
+    // Example $X:GET-EN:%
+    if (pMSG->hasValString(1, "GET-EN")) {
+        pMSG->sendMsgResponse("enable", this->_enable());
+        return true;
+    }
+    // Example $X:SET-EN:1%
+    if (pMSG->hasValString(1, "SET-EN")) {
+        this->Enable(pMSG->hasValString(2, "1"));
+        pMSG->sendMsgResponse("enable", this->_enable());
+        return true;
+    }
+    // enable0
+    // Example $X:GET-EN0:%
+    if (pMSG->hasValString(1, "GET-EN0")) {
+        pMSG->sendMsgResponse("enable0", this->_enable0());
+        return true;
+    }
+    // Example $X:SET-EN0:1%
+    if (pMSG->hasValString(1, "SET-EN0")) {
+        this->Enable0(pMSG->hasValString(2, "1"));
+        pMSG->sendMsgResponse("enable0", this->_enable0());
+        return true;
+    }
     return false;
 }
 
 // ----------------------------------------------------
-// TEST INTERFACE
+// _DEV INTERFACE
 String AbsHandler::getClassName() { return "AbsHandler"; }
 void AbsHandler::sayHi() {
     Ch->pSERIAL->println("Hi from ", this->getClassName(), " ", (unsigned int)this);

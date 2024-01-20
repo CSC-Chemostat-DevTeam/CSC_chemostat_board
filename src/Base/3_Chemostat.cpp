@@ -2,17 +2,15 @@
 
 #include "Base/1_config.h"
 #include "Base/2_utils.h"
-#include "Base/3_Chemostat.h"
-#include "Base/3_SerialHandler.h"
-#include "Base/3_MsgHandler.h"
+#include "Base/4_Chemostat.h"
+#include "Base/4_SerialHandler.h"
+#include "Base/4_MsgHandler.h"
 
 // ----------------------------------------------------
 // CONSTRUCTOR
 Chemostat::Chemostat() {
     
     // Serial.println(">>> At Chemostat::Chemostat <<<");
-
-    // TODO: Add All handlers pointer array buffer
 
     // HANDLERS
     this->pMSG = new MsgHandler(this); // TODO: [HEAP] Check proper free/delete
@@ -22,20 +20,30 @@ Chemostat::Chemostat() {
     /// MSG INTERFACE
     this->_MSG_HANDLERS_BUFFER[0] = NULL;
     this->pushMsgHandler(this->pMSG);
+    this->pushMsgHandler(this->pSERIAL);
+
+    /// ALL HANDLERS INTERFACE
+    this->_ALL_HANDLERS_BUFFER[0] = NULL;
+    this->pushHandler(this->pMSG);
+    this->pushHandler(this->pSERIAL);
 }
+
+//  TODO: Use _ALL_HANDLERS_BUFFER for setting a Chemostat destroyer
 
 // ----------------------------------------------------
 // TIMETAG INTERFACE
 String Chemostat::nowTimeTag() { return String(millis()); }
 
 // ----------------------------------------------------
-// TEST INTERFACE
+// _DEV INTERFACE
 String Chemostat::getClassName() { return "Chemostat"; }
 void Chemostat::sayHi() {
     pSERIAL->println("Hi from ", this->getClassName(), " ", (unsigned int)this);
     // Handlers
-    pSERIAL->sayHi();
-    pMSG->sayHi();
+    for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
+        if (_ALL_HANDLERS_BUFFER[i] == NULL){ break; }
+        _ALL_HANDLERS_BUFFER[i]->sayHi();
+    }
 }
 
 // ----------------------------------------------------
@@ -46,8 +54,8 @@ boolean Chemostat::handleMsg() {
     if (!pMSG->hasValString(0, "CH")) { return false; }
 
     // TEST MSGS
-    // Example: $CH:SAY_HAI%
-    if (pMSG->hasValString(1, "SAY_HI")) {
+    // Example: $CH:SAY-HI%
+    if (pMSG->hasValString(1, "SAY-HI")) {
         sayHi(); 
         return true;
     }
@@ -110,13 +118,13 @@ void Chemostat::handleAllMsgs(){
 }
 
 void Chemostat::pushMsgHandler(AbsHandler* h) {
-    for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
-        if (_MSG_HANDLERS_BUFFER[i] != NULL){ continue; }
-        _MSG_HANDLERS_BUFFER[i] = h;
-        if (i+1 == CHEMOSTAT_HANDLERS_BUFFER_SIZE) { break; }
-        _MSG_HANDLERS_BUFFER[i+1] = NULL;
-        break;
-    }
+    _pushHandler(_MSG_HANDLERS_BUFFER, h);
+}
+
+// ----------------------------------------------------
+// ALL HANDLERS INTERFACE
+void Chemostat::pushHandler(AbsHandler* h) {
+    _pushHandler(_ALL_HANDLERS_BUFFER, h);
 }
 
 // ----------------------------------------------------
@@ -126,31 +134,58 @@ void Chemostat::onsetup(){
 
     // ---------------------
     // CHEMOSTAT SETUP
+    // noop for now
 
     // ---------------------
     // SETUP HANDLERS
-
-    // this->pMSG->onsetup();
-    this->pSERIAL->onsetup();
+    // Handlers
+    for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
+        if (_ALL_HANDLERS_BUFFER[i] == NULL){ break; }
+        _ALL_HANDLERS_BUFFER[i]->onsetup();
+    }
 
     // ---------------------
     // WELCOME
+    printWelcome();
+}
+
+void Chemostat::printWelcome() {
+
     pSERIAL->newLine();
-    pSERIAL->println("----------------------");
+    pSERIAL->println(LINE_SEPARATOR);
     pSERIAL->println(" WELCOME TO CSC-CHEMOSTAT");
     pSERIAL->println(" info at https://github.com/CSC-Chemostat-DevTeam");
-    pSERIAL->println("----------------------");
+    pSERIAL->println(LINE_SEPARATOR);
     pSERIAL->newLine();
+
     this->sayHi();
     pSERIAL->newLine();
 }
     
 void Chemostat::onloop(){
     // Serial.println(">>> Chemostat::onloop <<<");
-    
-    // CHEMOSTAT ONLOOP
 
-    // CALL HANDLERS ONLOOPS
-    this->pMSG->onloop();
-    this->pSERIAL->onloop();
+    // ---------------------
+    // CHEMOSTAT ONLOOP
+    // noop for now
+
+    // ---------------------
+    // ONLOOP HANDLERS
+    // Handlers
+    for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
+        if (_ALL_HANDLERS_BUFFER[i] == NULL){ break; }
+        _ALL_HANDLERS_BUFFER[i]->onloop();
+    }
+}
+
+// ----------------------------------------------------
+// Utils
+void _pushHandler(AbsHandler* buffer[], AbsHandler* h) {
+    for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
+        if (buffer[i] != NULL){ continue; }
+        buffer[i] = h;
+        if (i+1 == CHEMOSTAT_HANDLERS_BUFFER_SIZE) { break; }
+        buffer[i+1] = NULL;
+        break;
+    }
 }

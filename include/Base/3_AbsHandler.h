@@ -9,7 +9,7 @@
 
 #include <Arduino.h>
 
-#include "Base/3_Chemostat.h"
+#include "Base/4_Chemostat.h"
 
 // ----------------------------------------------------
 // TODO: Add an 'info' 'warn' 'error' function to print stuff
@@ -27,6 +27,11 @@ class AbsHandler {
     AbsHandler(Chemostat* Ch);
 
     // ----------------------------------------------------
+    // SKETCH INTERFACE
+    virtual void onsetup();
+    virtual void onloop();
+
+    // ----------------------------------------------------
     // ENABLE INTERFACE
     virtual boolean _enable();
     virtual boolean _enable0();
@@ -39,7 +44,7 @@ class AbsHandler {
     virtual boolean handleMsg();
 
     // ----------------------------------------------------
-    // TEST INTERFACE
+    // _DEV INTERFACE
     virtual String getClassName();
     virtual void sayHi();
     

@@ -32,9 +32,20 @@
 // ----------------------------------------------------
 // MsgHandler
 
+#define TRY_READ_MSG_TIMEOUT 300 // ms
+
 // (to be sync with PC side)
+// TODO: find the cpp way of handling strings constants
 #define MSG_RECIEVED_TOKEN "RECIEVED!!!"
 #define MSG_RESPONSE_DONE_TOKEN  "DONE!!!"
+#define MSG_ACKNOWLADGE_TOKEN "ACK"
 #define UNKNOWN_CMD_ERROR_TOKEN "ERROR, UNKNOWN COMMAND!!!"
+
+// ----------------------------------------------------
+// UTILS
+
+#define TAB "   "
+#define LINE_SEPARATOR "----------------------"
+
 
 #endif // CONFIG_H

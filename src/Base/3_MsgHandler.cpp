@@ -1,8 +1,8 @@
 #include "Base/1_config.h"
 #include "Base/2_utils.h"
 #include "Base/3_CSVLineReader.h"
-#include "Base/3_MsgHandler.h"
-#include "Base/3_SerialHandler.h"
+#include "Base/4_MsgHandler.h"
+#include "Base/4_SerialHandler.h"
 
 // Interfaces will be called using the Chemostat object
 
@@ -38,25 +38,9 @@ void MsgHandler::onloop(){
     this->reset(); // reset reader
 }
 
-// ----------------------------------------------------
-// MSG INTERFACE
-
 /// -------------------------
 /// EXEC CMD
-boolean MsgHandler::handleMsg() {
-
-    // MsgHandler* const pMSG = this->Ch->pMSG;
-    // SerialHandler* const pSERIAL = this->Ch->pSERIAL;
-
-    // // Prefix Depedent
-    // if (pMSG->hasValStringPrefix("CMD-")) { return false; }
-
-    // // Call parent
-    // // if (this->AbsHandler::handleMsg()) { return true; }
-
-    return false;
-
-}
+boolean MsgHandler::handleMsg() { return false; }
 
 /// -------------------------
 // MSG INTERFACE
@@ -77,10 +61,6 @@ boolean MsgHandler::hasValStringPrefix(byte i, const String& prefix) {
 boolean MsgHandler::hasValStringSuffix(byte i, const String& suffix) {
     return this->getValString(i).startsWith(suffix);
 }
-
-// unsigned int MsgHandler::cmdhash(){
-//     return this->csvline.hash();
-// }
 
 /// -------------------------
 void MsgHandler::reset(){
@@ -121,25 +101,26 @@ void MsgHandler::tryReadMsg(unsigned long tout){
 /// RESPONSE INTERFACE
 
 void MsgHandler::openMsgResponse(){
-    // Example $RES:REQ-HASH:TIMETAG:RECIEVED!!!%
     
-    this->Ch->pSERIAL->println("MSG ", this->Ch->pMSG->msgCsvLineString()); // Some pretty formatting
+    // Some pretty formatting
+    this->Ch->pSERIAL->println(LINE_SEPARATOR);
+    this->Ch->pSERIAL->println("MSG ", this->Ch->pMSG->msgCsvLineString()); 
 
-    this->Ch->pMSG->sendMsg(
-        this->Ch->pMSG->hash, 
-        this->Ch->nowTimeTag(),
-        MSG_RECIEVED_TOKEN
-    );
+    // ACKNOWLADGE
+    // Example $ACK:REQ-HASH:TIMETAG:RECIEVED!!!%
+    sendMsgAcknowladge(MSG_RECIEVED_TOKEN);
 }
 
 void MsgHandler::closeMsgResponse(){
-    // Example $RES:REQ-HASH:TIMETAG:RECIEVED%
-    this->Ch->pMSG->sendMsg(
-        this->Ch->pMSG->hash, 
-        this->Ch->nowTimeTag(), 
-        MSG_RESPONSE_DONE_TOKEN
-    );
-    this->Ch->pSERIAL->newLine(); // Some pretty formatting
+
+    // ACKNOWLADGE
+    // Example $ACK:REQ-HASH:TIMETAG:RECIEVED%
+    if (this->respcount > 0) { // ignore if no response was triggered
+        sendMsgAcknowladge(MSG_RESPONSE_DONE_TOKEN);
+    }
+    
+    // Some pretty formatting
+    this->Ch->pSERIAL->newLine(); 
 }
 
 // /// ----------------------------------------------------
@@ -217,5 +198,5 @@ String MsgHandler::msgCsvLineString(){
 
 
 // ----------------------------------------------------
-// TEST INTERFACE
+// _DEV INTERFACE
 String MsgHandler::getClassName() { return "MsgHandler"; }

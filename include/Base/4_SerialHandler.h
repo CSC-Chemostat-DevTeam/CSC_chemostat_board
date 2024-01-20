@@ -5,10 +5,13 @@
 
 #include "Base/1_config.h"
 #include "Base/2_utils.h"
-#include "Base/3_Chemostat.h"
+#include "Base/4_Chemostat.h"
 #include "Base/3_AbsHandler.h"
 
+// ----------------------------------------------------
 // All Chemostat serial printing must use this Handler
+// ----------------------------------------------------
+
 class SerialHandler : 
     public AbsHandler
 {
@@ -46,8 +49,13 @@ class SerialHandler :
         int read() { return Serial.read(); }
 
         // ----------------------------------------------------
-        // TEST INTERFACE
+        // _DEV INTERFACE
         String getClassName();
+        void sayHi();
+
+        // -------------------------
+        // EXEC CMD
+        boolean handleMsg();
 
 };
 
