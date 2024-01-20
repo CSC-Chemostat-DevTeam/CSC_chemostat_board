@@ -6,31 +6,23 @@
 // Local libs
 #include "Base/0_Base.h"
 
-Chemostat* pCH; // TODO: [POINTER] Check proper free/delete
+Chemostat* pCH;
 
 void setup() {
 
   // DEV
-  pCH = new Chemostat(); // TODO: [HEAP] Check proper free/delete
-  pCH->onsetup();
+    pCH = new Chemostat(); // TODO: [HEAP] Check proper free/delete
+    pCH->onsetup();
 
 }
 
 void loop() {
   pCH->onloop();
   // DEV
-  pCH->pCMD->request("KAKA");
+  // pCH->pMSG->request("KAKA");
+  // pCH->sayHi();
+  // delay(1000);
 }
-
-// RAM:   [=         ]   8.4% (used 692 bytes from 8192 bytes)
-// Flash: [          ]   3.7% (used 9354 bytes from 253952 bytes)
-
-
-
-
-
-
-
 
 
 // // DEV //

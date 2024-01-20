@@ -32,7 +32,6 @@ unsigned int crc16_hash(unsigned int crc, String str);
 //  --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 // My printing
 
-
 // print
 template <typename Arg>
 void _print(Arg arg) {
