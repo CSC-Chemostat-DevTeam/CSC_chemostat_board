@@ -15,7 +15,7 @@ class SerialHandler;
 
 class Chemostat {
     private: 
-        AbsHandler* _CMD_HANDLERS_BUFFER[CHEMOSTAT_HANDLERS_BUFFER_SIZE];
+        AbsHandler* _MSG_HANDLERS_BUFFER[CHEMOSTAT_HANDLERS_BUFFER_SIZE];
 
     public:
         // ----------------------------------------------------
@@ -39,18 +39,18 @@ class Chemostat {
         void sayHi();
 
         // ----------------------------------------------------
-        // CMD INTERFACE
-        // boolean handleMsg();
+        // MSG INTERFACE
+        boolean handleMsg();
 
         // ----------------------------------------------------
         // TIME INTERFACE
         // Use a clock module if present, otherwise use millis or progress
-        // String nowTimeTag();
+        String nowTimeTag();
         
         // ----------------------------------------------------
         // ALL CALLERS
 
-        // CMD INTERFACE
+        // MSG INTERFACE
         void handleAllMsgs();
         void pushMsgHandler(AbsHandler* h);
 };

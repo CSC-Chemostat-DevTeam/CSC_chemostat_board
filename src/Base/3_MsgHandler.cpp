@@ -39,54 +39,44 @@ void MsgHandler::onloop(){
 }
 
 // ----------------------------------------------------
-// CMD INTERFACE
+// MSG INTERFACE
 
 /// -------------------------
 /// EXEC CMD
 boolean MsgHandler::handleMsg() {
 
-    MsgHandler* const pMSG = this->Ch->pMSG;
-    SerialHandler* const pSERIAL = this->Ch->pSERIAL;
-
-    // DEV TODEL
-    pSERIAL->println(pMSG->cmdCSVLineString());
-    return true;
-
-    // // Unique
-    // if (pMSG->hasKey("ECHO")) {
-    //     int n = 1;
-    //     if (!pMSG->getCmdVal1().equals("")) {
-    //         n = getCmdVal1().toInt();
-    //     }
-    //     for (int i = 0; i < n; i++) {
-    //         pMSG->response(pMSG->getCmdVal0());
-    //     }
-    //     return true;
-    // }
+    // MsgHandler* const pMSG = this->Ch->pMSG;
+    // SerialHandler* const pSERIAL = this->Ch->pSERIAL;
 
     // // Prefix Depedent
-    // if (pMSG->hasKeyPrefix("CMD-")) { return false; }
+    // if (pMSG->hasValStringPrefix("CMD-")) { return false; }
 
     // // Call parent
     // // if (this->AbsHandler::handleMsg()) { return true; }
 
-    // return false;
+    return false;
 
 }
 
 /// -------------------------
-/// MSG QUERYS
-// boolean MsgHandler::hasKey(const String& str) {
-//     return this->getCmdKey().equals(str);
-// }
+// MSG INTERFACE
+String MsgHandler::getValString(byte i) {
+    return this->csvline.getValString(i);
+}
 
-// boolean MsgHandler::hasKeyPrefix(const String& prefix) {
-//     return this->getCmdKey().startsWith(prefix);
-// }
+/// -------------------------
+/// MSG VALS QUERYS
+boolean MsgHandler::hasValString(byte i, const String& str) {
+    return this->getValString(i).equals(str);
+}
 
-// boolean MsgHandler::hasKeySuffix(const String& suffix) {
-//     return this->getCmdKey().startsWith(suffix);
-// }
+boolean MsgHandler::hasValStringPrefix(byte i, const String& prefix) {
+    return this->getValString(i).startsWith(prefix);
+}
+
+boolean MsgHandler::hasValStringSuffix(byte i, const String& suffix) {
+    return this->getValString(i).startsWith(suffix);
+}
 
 // unsigned int MsgHandler::cmdhash(){
 //     return this->csvline.hash();
@@ -95,6 +85,8 @@ boolean MsgHandler::handleMsg() {
 /// -------------------------
 void MsgHandler::reset(){
     this->csvline.reset(); // reset reader
+    this->hash = 0;
+    this->respcount = 0;
 }
 
 // If cmd buffers are empty, listen for incoming commands for 'tout' time;
@@ -117,31 +109,38 @@ void MsgHandler::tryReadMsg(unsigned long tout){
             if (!ok_flag) { this->reset(); break; }
             delay(1); // Stability?
         } 
-        if (this->hasValidMsg()) { break; }
+        // Done
+        if (this->hasValidMsg()) { 
+            this->hash = this->msgHash(); // msg hash
+            break; 
+        }
     }
 }
 
-// /// -------------------------
-// /// RESPONSE INTERFACE
-// void MsgHandler::open_response(){
-//     this->Ch->pSERIAL->println(
-//         "\n"
-//         ">>> ", "CMD RECEIVED ", 
-//         "[", millis(), "-", this->cmdHash(), "] ",
-//         this->cmdCSVLineString(), " >>>"
-//     );
-// }
+/// -------------------------
+/// RESPONSE INTERFACE
 
-// void MsgHandler::close_response(){
-//     this->Ch->pSERIAL->println(
-//         "<<< ", 
-//         "CMD FINISHED ",
-//         "[", millis(), "-", this->cmdHash(), "-", this->respcount, "] ",
-//         this->cmdCSVLineString(),
-//         " <<<"
-//     );
-//     this->respcount = 0;
-// }
+void MsgHandler::openMsgResponse(){
+    // Example $RES:REQ-HASH:TIMETAG:RECIEVED!!!%
+    
+    this->Ch->pSERIAL->println("MSG ", this->Ch->pMSG->msgCsvLineString()); // Some pretty formatting
+
+    this->Ch->pMSG->sendMsg(
+        this->Ch->pMSG->hash, 
+        this->Ch->nowTimeTag(),
+        MSG_RECIEVED_TOKEN
+    );
+}
+
+void MsgHandler::closeMsgResponse(){
+    // Example $RES:REQ-HASH:TIMETAG:RECIEVED%
+    this->Ch->pMSG->sendMsg(
+        this->Ch->pMSG->hash, 
+        this->Ch->nowTimeTag(), 
+        MSG_RESPONSE_DONE_TOKEN
+    );
+    this->Ch->pSERIAL->newLine(); // Some pretty formatting
+}
 
 // /// ----------------------------------------------------
 // /// REQUEST INTERFACE
@@ -168,7 +167,7 @@ void MsgHandler::tryReadMsg(unsigned long tout){
 //     for (int i = 0; i < 3; i++) {
 //         this->tryReadMsg(TRY_READ_MSG_TIMEOUT);
 //         if (this->hasValidMsg()) {
-//             if (!this->hasKey("RQCONF")) { return false; }
+//             if (!this->hasValString("RQCONF")) { return false; }
 //             ko_flag = this->getCmdVal().equals(req_hash);
 //             this->reset(); // If RQCONF reset
 //             break;
@@ -191,11 +190,11 @@ boolean MsgHandler::hasValidMsg(){
     return this->csvline.valid_input;
 }
 
-unsigned int MsgHandler::cmdHash(){
+unsigned int MsgHandler::msgHash(){
     return this->csvline.hash();
 }
 
-String MsgHandler::cmdCSVLineString(){
+String MsgHandler::msgCsvLineString(){
     return this->csvline.csvLineString();
 }
 

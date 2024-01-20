@@ -38,35 +38,35 @@ boolean AbsHandler::isEnable(){
 }
 
 // // ----------------------------------------------------
-// CMD INTERFACE
+// MSG INTERFACE
 boolean AbsHandler::handleMsg(){
 
     // Serial.println(">>> At AbsHandler::handleMsg <<<");
 
-    MsgHandler* const pMSG = this->Ch->pMSG;
+    // MsgHandler* const pMSG = this->Ch->pMSG;
 
     // --------------------
     // Suffixes
 
     // /// --------------------
     // /// ENABLE INTERFACE
-    // if (pMSG->hasKeySuffix("GET-EN")) {
-    //     pMSG->response("enable: ", this->_enable());
+    // if (pMSG->hasValStringSuffix("GET-EN")) {
+    //     pMSG->sendMsgResponse("enable: ", this->_enable());
     //     return true;
     // }
-    // if (pMSG->hasKeySuffix("SET-EN")) {
+    // if (pMSG->hasValStringSuffix("SET-EN")) {
     //     this->Enable(pMSG->getCmdVal().toInt() != 0);
-    //     pMSG->response("enable: ", this->_enable());
+    //     pMSG->sendMsgResponse("enable: ", this->_enable());
     //     return true;
     // }
     // // enable0
-    // if (pMSG->hasKeySuffix("GET-EN0")) {
-    //     pMSG->response("enable0: ", this->_enable0());
+    // if (pMSG->hasValStringSuffix("GET-EN0")) {
+    //     pMSG->sendMsgResponse("enable0: ", this->_enable0());
     //     return true;
     // }
-    // if (pMSG->hasKeySuffix("SET-EN0")) {
+    // if (pMSG->hasValStringSuffix("SET-EN0")) {
     //     this->Enable0(pMSG->getCmdVal().toInt() != 0);
-    //     pMSG->response("enable0: ", this->_enable0());
+    //     pMSG->sendMsgResponse("enable0: ", this->_enable0());
     //     return true;
     // }
     return false;

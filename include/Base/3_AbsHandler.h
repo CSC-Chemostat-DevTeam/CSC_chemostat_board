@@ -35,7 +35,7 @@ class AbsHandler {
     virtual boolean isEnable();
 
     // ----------------------------------------------------
-    // CMD INTERFACE
+    // MSG INTERFACE
     virtual boolean handleMsg();
 
     // ----------------------------------------------------

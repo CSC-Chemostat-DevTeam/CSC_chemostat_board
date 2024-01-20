@@ -12,15 +12,21 @@ Chemostat::Chemostat() {
     
     // Serial.println(">>> At Chemostat::Chemostat <<<");
 
+    // TODO: Add All handlers pointer array buffer
+
     // HANDLERS
     this->pMSG = new MsgHandler(this); // TODO: [HEAP] Check proper free/delete
     this->pSERIAL = new SerialHandler(this); // TODO: [HEAP] Check proper free/delete
     
     // CALLERS INTERFACES
-    /// CMD INTERFACE
-    this->_CMD_HANDLERS_BUFFER[0] = NULL;
+    /// MSG INTERFACE
+    this->_MSG_HANDLERS_BUFFER[0] = NULL;
     this->pushMsgHandler(this->pMSG);
 }
+
+// ----------------------------------------------------
+// TIMETAG INTERFACE
+String Chemostat::nowTimeTag() { return String(millis()); }
 
 // ----------------------------------------------------
 // TEST INTERFACE
@@ -33,22 +39,35 @@ void Chemostat::sayHi() {
 }
 
 // ----------------------------------------------------
-// CMD INTERFACE
-// boolean Chemostat::handleMsg() {
+// MSG INTERFACE
+boolean Chemostat::handleMsg() {
 
-//     MsgHandler* const pMSG = this->pMSG;
+    // Check target code
+    if (!pMSG->hasValString(0, "CH")) { return false; }
 
-//     // EQUAL
-//     if (pMSG->hasKey("TEST-CMD")) {
-//         pMSG->response("Hi from Chemostat ", (int) this);
-//         return true;
-//     }
+    // TEST MSGS
+    // Example: $CH:SAY_HAI%
+    if (pMSG->hasValString(1, "SAY_HI")) {
+        sayHi(); 
+        return true;
+    }
 
-//     // Prefix Depedent
-//     if (pMSG->hasKeyPrefix("CH-")) { return false; }
+    // ECHO
+    // Example: $CH:ECHO:BLA:10%
+    if (pMSG->hasValString(1, "ECHO")) {
+        int n = 1;
+        String val2 = pMSG->getValString(2);
+        String val3 = pMSG->getValString(3);
+        if (!val3.equals("")) { n = val3.toInt();}
+        for (int i = 0; i < n; i++) {
+            // pMSG->sendMsgResponse(pMSG->getCmdVal0());
+            pMSG->sendMsgResponse(val2);
+        }
+        return true;
+    }
 
-//     return false;
-// }
+    return false;
+}
 
 // ----------------------------------------------------
 // CALLERS INTERFACES
@@ -57,56 +76,45 @@ void Chemostat::sayHi() {
 void Chemostat::handleAllMsgs(){
 
     // Serial.println(">>> Chemostat::handleAllMsgs <<<");
-    MsgHandler* const pMSG = this->pMSG;
 
     // no cmd is a noop
     if (!this->pMSG->hasValidMsg()) { return; }
 
-    // DEV TODEL
-    // call handlers
+    // // Open response
+    pMSG->openMsgResponse();
+
+    // call myself
+    if (this->handleMsg()) { 
+        // close response
+        pMSG->closeMsgResponse();
+        return; 
+    }
+
+    // call all handlers
     for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
-        if (_CMD_HANDLERS_BUFFER[i] == NULL){ break; }
-        if (_CMD_HANDLERS_BUFFER[i]->handleMsg()) { 
+        if (_MSG_HANDLERS_BUFFER[i] == NULL){ break; }
+        if (_MSG_HANDLERS_BUFFER[i]->handleMsg()) { 
             // close response
-            // pMSG->close_response(); 
+            pMSG->closeMsgResponse();
             return; 
         }
     }
 
-
-    // // Open response
-    // pMSG->open_response(); 
-
-    // call myself
-    // if (this->handleMsg()) { 
-    //     // close response
-    //     pMSG->close_response(); 
-    //     return; 
-    // }
-
-    // // call handlers
-    // for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
-    //     if (_CMD_HANDLERS_BUFFER[i] == NULL){ break; }
-    //     if (_CMD_HANDLERS_BUFFER[i]->handleMsg()) { 
-    //         // close response
-    //         pMSG->close_response(); 
-    //         return; 
-    //     }
-    // }
-
-    // // fallback
-    // pMSG->response("ERROR, UNKNOWN COMMAND");
-    // // close response
-    // pMSG->close_response();
+    // fallback
+    
+    pMSG->sendMsgResponse(UNKNOWN_CMD_ERROR_TOKEN);
+    
+    // close response
+    pMSG->closeMsgResponse();
 
 }
 
 void Chemostat::pushMsgHandler(AbsHandler* h) {
     for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
-        if (_CMD_HANDLERS_BUFFER[i] != NULL){ continue; }
-        _CMD_HANDLERS_BUFFER[i] = h;
+        if (_MSG_HANDLERS_BUFFER[i] != NULL){ continue; }
+        _MSG_HANDLERS_BUFFER[i] = h;
         if (i+1 == CHEMOSTAT_HANDLERS_BUFFER_SIZE) { break; }
-        _CMD_HANDLERS_BUFFER[i+1] = NULL;
+        _MSG_HANDLERS_BUFFER[i+1] = NULL;
         break;
     }
 }
@@ -127,13 +135,14 @@ void Chemostat::onsetup(){
 
     // ---------------------
     // WELCOME
-    pSERIAL->println("");
+    pSERIAL->newLine();
     pSERIAL->println("----------------------");
     pSERIAL->println(" WELCOME TO CSC-CHEMOSTAT");
     pSERIAL->println(" info at https://github.com/CSC-Chemostat-DevTeam");
-    this->sayHi();
     pSERIAL->println("----------------------");
-    pSERIAL->println("");
+    pSERIAL->newLine();
+    this->sayHi();
+    pSERIAL->newLine();
 }
     
 void Chemostat::onloop(){

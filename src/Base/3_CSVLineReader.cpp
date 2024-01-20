@@ -11,7 +11,6 @@ CSVLineReader::CSVLineReader(){
     this->valid_input = false;
     
     // buffers
-    // TODO: make array
     for (byte i = 0; i < CSV_LINE_READER_VALS_NUMBER; i++) {
         _CSV_LINE_VALS[i] = StaticString();
     }
@@ -35,7 +34,7 @@ void CSVLineReader::reset(){
 
 String CSVLineReader::csvLineString(){
     String kvs = "";
-    kvs += SCV_LINE_INIT_CHAR;
+    kvs += CSV_LINE_INIT_CHAR;
     for (byte i = 0; i < CSV_LINE_READER_VALS_NUMBER; i++) {
         kvs += this->getValString(i);
         kvs += SCV_LINE_SEP_CHAR;
@@ -51,7 +50,7 @@ String CSVLineReader::csvLineString(){
 boolean CSVLineReader::parseChar(char c){
 
     // INIT CHAR
-    if (c == SCV_LINE_INIT_CHAR) { 
+    if (c == CSV_LINE_INIT_CHAR) { 
         if (this->init_found) { return false; } // invalid (multiple init chars)
         this->init_found = true; 
         return true; 
@@ -61,7 +60,7 @@ boolean CSVLineReader::parseChar(char c){
 
     // DETECT SEP CHAR
     if (c == SCV_LINE_SEP_CHAR) { 
-        if (this->sep_found > 2) { return false; } // invalid
+        // if (this->sep_found == CSV_LINE_READER_VALS_NUMBER) { return false; } // invalid
         this->sep_found++; 
         return true;
     }
@@ -75,7 +74,7 @@ boolean CSVLineReader::parseChar(char c){
     // STORE CHAR
     if (sep_found < CSV_LINE_READER_VALS_NUMBER) {
         this->_CSV_LINE_VALS[sep_found].push(c);   
-    } else { // should never happend ;)
+    } else { // to many vals
         return false; 
     }
 

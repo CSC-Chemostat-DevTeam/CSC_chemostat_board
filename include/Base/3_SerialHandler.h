@@ -40,6 +40,7 @@ class SerialHandler :
         void println(T0 arg0, Ts... args) {
             _println(arg0, args...);
         }
+        void newLine();
 
         int available() { return Serial.available(); }
         int read() { return Serial.read(); }

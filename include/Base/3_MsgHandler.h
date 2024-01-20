@@ -16,7 +16,10 @@ class MsgHandler :
 {       
 	private:
 		CSVLineReader csvline;
+
+		// Response
 		unsigned long respcount;
+		unsigned int hash;
 
 	public:
 
@@ -35,11 +38,11 @@ class MsgHandler :
         String getClassName();
 
 		// ----------------------------------------------------
-        // CMD INTERFACE
+        // MSG INTERFACE
 		virtual boolean handleMsg();
 
 		// ----------------------------------------------------
-        // CMD INTERFACE 2
+        // MSG INTERFACE 2
 		/**
 			Will try to read a key pair from serial.
 			[BLOKING] This will block till tout or msg is received.
@@ -53,36 +56,54 @@ class MsgHandler :
 
 		// unsigned int cmdhash();
 
-		/**
-			get the current key as String.
-		*/
-		// String getCmdKey();
-
-		/**
-			get the current val as String.
-		*/
-		// String getCmdVal();
-		// String getCmdVal0();
-		// String getCmdVal1();
-		// String getCmdVal2();
+		String getValString(byte i);
 
 		boolean hasValidMsg();
-		unsigned int cmdHash();
-		String cmdCSVLineString();
+		unsigned int msgHash();
+		String msgCsvLineString();
 
-		// boolean hasKey(const String& str);
-		// boolean hasKeyPrefix(const String& prefix);
-		// boolean hasKeySuffix(const String& suffix);
+		// ----------------------------------------------------
+		// MSG VAL STRING QUERIES
+		boolean hasValString(byte i, const String& str);
+		boolean hasValStringPrefix(byte i, const String& prefix);
+		boolean hasValStringSuffix(byte i, const String& suffix);
+
+		// ----------------------------------------------------
+		// SEND MSG
+		template <typename Arg>
+		void sendMsg(Arg arg0) {
+			this->Ch->pSERIAL->println(CSV_LINE_INIT_CHAR, arg0, SCV_LINE_END_CHAR);
+		}
+		template <typename T0, typename... Ts>
+		void sendMsg(T0 arg0, Ts... args) {
+			this->Ch->pSERIAL->print(CSV_LINE_INIT_CHAR);
+			_printCSVVals(arg0, args...);
+			this->Ch->pSERIAL->println(SCV_LINE_END_CHAR);
+		};
+
+		// utils
+		template <typename Arg>
+		void _printCSVVals(Arg arg) { this->Ch->pSERIAL->print(arg);}
+		// variadic template with one or more arguments.
+		template <typename First, typename... Args>
+		void _printCSVVals(First first, Args... args) {
+			this->Ch->pSERIAL->print(first); 
+			this->Ch->pSERIAL->print(SCV_LINE_SEP_CHAR); 
+			_printCSVVals(args...);
+		}
 
 		// ----------------------------------------------------
 		// RESPONSE INTERFACE
-		// template <typename T0, typename... Ts>
-		// void response(T0 arg0, Ts... args) {
-		// 	this->Ch->pSERIAL->println(this->respcount, " | ", arg0, args...);
-		// 	this->respcount++;
-		// };
-		// void open_response();
-		// void close_response();
+		// Example $RES:MSG-HASH:TIMETAG:RECIEVED%
+		// Example $RES:MSG-HASH:RES_COUNT:BLA:BLE:BLI%
+		// Example $RES:MSG-HASH:TIMETAG:DONE%
+		template <typename T0, typename... Ts>
+		void sendMsgResponse(T0 arg0, Ts... args) {
+			this->sendMsg("RES", this->hash, this->respcount, arg0, args...);
+			this->respcount++;
+		};
+		void openMsgResponse();
+		void closeMsgResponse();
 
 		// ----------------------------------------------------
 		// REQUEST INTERFACE

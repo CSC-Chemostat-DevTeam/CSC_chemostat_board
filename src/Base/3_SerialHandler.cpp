@@ -31,6 +31,7 @@ String SerialHandler::getClassName() { return "SerialHandler"; }
 
 // ----------------------------------------------------
 // PRINT INTERFACE
-
 // See header
+
+void SerialHandler::newLine() { Serial.println(); }
 
