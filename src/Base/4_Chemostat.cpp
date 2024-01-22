@@ -5,6 +5,8 @@
 #include "Base/4_Chemostat.h"
 #include "Base/4_SerialHandler.h"
 #include "Base/4_MsgHandler.h"
+#include "Base/4_SDHandler.h"
+#include "Base/4_LogHandler.h"
 
 // ----------------------------------------------------
 // CONSTRUCTOR
@@ -15,30 +17,30 @@ Chemostat::Chemostat() {
     // HANDLERS
     this->pMSG = new MsgHandler(this); // TODO: [HEAP] Check proper free/delete
     this->pSERIAL = new SerialHandler(this); // TODO: [HEAP] Check proper free/delete
-    
-    // CALLERS INTERFACES
-    /// MSG INTERFACE
-    this->_MSG_HANDLERS_BUFFER[0] = NULL;
-    this->pushMsgHandler(this->pMSG);
-    this->pushMsgHandler(this->pSERIAL);
+    this->pSD = new SDHandler(this); // TODO: [HEAP] Check proper free/delete
+    this->pLOG = new LogHandler(this); // TODO: [HEAP] Check proper free/delete
 
     /// ALL HANDLERS INTERFACE
     this->_ALL_HANDLERS_BUFFER[0] = NULL;
     this->pushHandler(this->pMSG);
     this->pushHandler(this->pSERIAL);
+    this->pushHandler(this->pSD);
+    this->pushHandler(this->pLOG);
 }
 
 //  TODO: Use _ALL_HANDLERS_BUFFER for setting a Chemostat destroyer
 
 // ----------------------------------------------------
 // TIMETAG INTERFACE
+// TODO: If a clock module is installed use it as TimeTag, 
+// or use the accumulated SD aided progress
 String Chemostat::nowTimeTag() { return String(millis()); }
 
 // ----------------------------------------------------
 // _DEV INTERFACE
 String Chemostat::getClassName() { return "Chemostat"; }
 void Chemostat::sayHi() {
-    pSERIAL->println("Hi from ", this->getClassName(), " ", (unsigned int)this);
+    pSERIAL->println("Hi from ", this->getClassName(), " *", (unsigned int)this);
     // Handlers
     for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
         if (_ALL_HANDLERS_BUFFER[i] == NULL){ break; }
@@ -100,8 +102,8 @@ void Chemostat::handleAllMsgs(){
 
     // call all handlers
     for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
-        if (_MSG_HANDLERS_BUFFER[i] == NULL){ break; }
-        if (_MSG_HANDLERS_BUFFER[i]->handleMsg()) { 
+        if (_ALL_HANDLERS_BUFFER[i] == NULL){ break; }
+        if (_ALL_HANDLERS_BUFFER[i]->handleMsg()) { 
             // close response
             pMSG->closeMsgResponse();
             return; 
@@ -115,10 +117,6 @@ void Chemostat::handleAllMsgs(){
     // close response
     pMSG->closeMsgResponse();
 
-}
-
-void Chemostat::pushMsgHandler(AbsHandler* h) {
-    _pushHandler(_MSG_HANDLERS_BUFFER, h);
 }
 
 // ----------------------------------------------------

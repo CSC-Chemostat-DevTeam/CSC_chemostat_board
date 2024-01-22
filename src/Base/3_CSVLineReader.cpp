@@ -37,9 +37,9 @@ String CSVLineReader::csvLineString(){
     kvs += CSV_LINE_INIT_CHAR;
     for (byte i = 0; i < CSV_LINE_READER_VALS_NUMBER; i++) {
         kvs += this->getValString(i);
-        kvs += SCV_LINE_SEP_CHAR;
+        kvs += CSV_LINE_SEP_CHAR;
     }
-    kvs += SCV_LINE_END_CHAR;
+    kvs += CSV_LINE_END_CHAR;
     return kvs;
 }
 
@@ -59,14 +59,14 @@ boolean CSVLineReader::parseChar(char c){
     if (!init_found) { return false; }
 
     // DETECT SEP CHAR
-    if (c == SCV_LINE_SEP_CHAR) { 
+    if (c == CSV_LINE_SEP_CHAR) { 
         // if (this->sep_found == CSV_LINE_READER_VALS_NUMBER) { return false; } // invalid
         this->sep_found++; 
         return true;
     }
 
     // DETECT END CHAR
-    if (c == SCV_LINE_END_CHAR) { 
+    if (c == CSV_LINE_END_CHAR) { 
         this->valid_input = true; // validate input
         return true;
     }

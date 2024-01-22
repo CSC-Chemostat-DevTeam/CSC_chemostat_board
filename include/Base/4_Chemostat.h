@@ -7,6 +7,8 @@
 class AbsHandler;
 class MsgHandler;
 class SerialHandler;
+class SDHandler;
+class LogHandler;
 
 // TODO: make a sayHi system for tracking obj pointers
 // To see why they change with time
@@ -15,7 +17,6 @@ class SerialHandler;
 
 class Chemostat {
     private: 
-        AbsHandler* _MSG_HANDLERS_BUFFER[CHEMOSTAT_HANDLERS_BUFFER_SIZE];
         AbsHandler* _ALL_HANDLERS_BUFFER[CHEMOSTAT_HANDLERS_BUFFER_SIZE];
 
     public:
@@ -23,6 +24,8 @@ class Chemostat {
         // HANDLERS
         MsgHandler* pMSG;
         SerialHandler* pSERIAL;
+        SDHandler* pSD;
+        LogHandler* pLOG;
 
         // ----------------------------------------------------
         // CONSTRUCTOR
@@ -53,7 +56,6 @@ class Chemostat {
 
         // MSG INTERFACE
         void handleAllMsgs();
-        void pushMsgHandler(AbsHandler* h);
 
         void pushHandler(AbsHandler* h);
         

@@ -39,7 +39,7 @@ void SerialHandler::sayHi() {
 void SerialHandler::newLine() { Serial.println(); }
 
 // -------------------------
-// EXEC CMD
+// HANDLE MSG INTERFACE
 boolean SerialHandler::handleMsg() { 
 
     MsgHandler* const pMSG = this->Ch->pMSG;

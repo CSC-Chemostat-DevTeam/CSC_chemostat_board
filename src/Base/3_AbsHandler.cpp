@@ -1,5 +1,5 @@
 #include "Base/2_utils.h"
-#include "Base/3_AbsHandler.h"
+#include "Base/4_AbsHandler.h"
 #include "Base/4_MsgHandler.h"
 
 
@@ -88,5 +88,5 @@ boolean AbsHandler::handleMsg(){
 // _DEV INTERFACE
 String AbsHandler::getClassName() { return "AbsHandler"; }
 void AbsHandler::sayHi() {
-    Ch->pSERIAL->println("Hi from ", this->getClassName(), " ", (unsigned int)this);
+    Ch->pSERIAL->println("Hi from ", this->getClassName(), " *", (unsigned int)this);
 }

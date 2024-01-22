@@ -6,7 +6,7 @@
 #include "Base/1_config.h"
 #include "Base/2_utils.h"
 #include "Base/4_Chemostat.h"
-#include "Base/3_AbsHandler.h"
+#include "Base/4_AbsHandler.h"
 
 // ----------------------------------------------------
 // All Chemostat serial printing must use this Handler
@@ -54,11 +54,10 @@ class SerialHandler :
         void sayHi();
 
         // -------------------------
-        // EXEC CMD
+        // HANDLE MSG INTERFACE
         boolean handleMsg();
 
 };
-
 
 
 

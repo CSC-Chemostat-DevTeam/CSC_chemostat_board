@@ -3,7 +3,7 @@
 
 #include <SD.h>
 #include "Base/2_utils.h"
-#include "Base/3_AbsHandler.h"
+#include "Base/4_AbsHandler.h"
 #include "Base/3_CSVLineReader.h"
 #include "Base/4_SerialHandler.h"
 #include "Base/4_Chemostat.h"
@@ -74,13 +74,13 @@ class MsgHandler :
 		// SEND MSG
 		template <typename Arg>
 		void sendMsg(Arg arg0) {
-			this->Ch->pSERIAL->println(CSV_LINE_INIT_CHAR, arg0, SCV_LINE_END_CHAR);
+			this->Ch->pSERIAL->println(CSV_LINE_INIT_CHAR, arg0, CSV_LINE_END_CHAR);
 		}
 		template <typename T0, typename... Ts>
 		void sendMsg(T0 arg0, Ts... args) {
 			this->Ch->pSERIAL->print(CSV_LINE_INIT_CHAR);
 			_printCSVVals(arg0, args...);
-			this->Ch->pSERIAL->println(SCV_LINE_END_CHAR);
+			this->Ch->pSERIAL->println(CSV_LINE_END_CHAR);
 		};
 
 		// utils
@@ -90,7 +90,7 @@ class MsgHandler :
 		template <typename First, typename... Args>
 		void _printCSVVals(First first, Args... args) {
 			this->Ch->pSERIAL->print(first); 
-			this->Ch->pSERIAL->print(SCV_LINE_SEP_CHAR); 
+			this->Ch->pSERIAL->print(CSV_LINE_SEP_CHAR); 
 			_printCSVVals(args...);
 		}
 

@@ -4,8 +4,6 @@
 #include "Base/4_MsgHandler.h"
 #include "Base/4_SerialHandler.h"
 
-// Interfaces will be called using the Chemostat object
-
 // ----------------------------------------------------
 // CONSTRUCTOR
 MsgHandler::MsgHandler(Chemostat* Ch) :
@@ -39,7 +37,7 @@ void MsgHandler::onloop(){
 }
 
 /// -------------------------
-/// EXEC CMD
+/// HANDLE MSG INTERFACE
 boolean MsgHandler::handleMsg() { return false; }
 
 /// -------------------------
