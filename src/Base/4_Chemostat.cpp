@@ -174,6 +174,11 @@ void Chemostat::onloop(){
         if (_ALL_HANDLERS_BUFFER[i] == NULL){ break; }
         _ALL_HANDLERS_BUFFER[i]->onloop();
     }
+
+    // DEV
+    this->pSERIAL->println("-----------");
+    this->pLOG->dev("write_test_check: ", this->pSD->checkReadWrite());
+    delay(3000);
 }
 
 // ----------------------------------------------------

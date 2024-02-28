@@ -26,8 +26,10 @@ void SDHandler::onsetup() {
     Serial.print("Initializing SD card...");
 
     // see if the card is present and can be initialized:
-    if (!SD.begin(SD_CS_PIN)) {
+    if (!SD.begin(SPI_QUARTER_SPEED, SD_CS_PIN)) {
         Serial.println("Card failed, or not present");
+        delay(3000);
+        this->onsetup();
         // Error just if enable
         // if (this->isEnable()) { 
         //     // TODO: Add ERROR INTERFACE ex: SD logging + led signal + soud + Serial log
@@ -61,10 +63,18 @@ boolean SDHandler::handleMsg() {
     // CHECK WRITE & READ
     // Example: $SD:CHECK-WR%
     if (pMSG->hasValString(1, "CHECK-WR")) {
-        // empty msg, just akc
         pMSG->sendMsgResponse("write_test_check", this->checkReadWrite());
         return true;
     }
+
+    // DELETE
+    // Example: $SD:DELETE:FILE%
+    if (pMSG->hasValString(1, "DELETE")) {
+        this->remove(pMSG->getValString(2));
+        return true;
+    }
+
+    // .fseventsd
 
     return false;
 }
@@ -97,29 +107,25 @@ String SDHandler::readLineFile(String file, String onerr) {
     if (IO) {
         while(IO.available()){
             if (this->_LINE_BUFFER.isFull()) {
-                // TOLOG
-                Serial.print("Single line file too long!!!");
-                Serial.println(file);
-
+                this->Ch->pLOG->dev("Single line file too long!!!, file: ", file);
                 this->_LINE_BUFFER.reset();
-                IO.close();
+                IO.close(); delay(5);
                 return onerr;
             }
-            c = IO.read();
+            c = IO.read(); delay(5);
             if (c == '\n') { break; } // end of line
             this->_LINE_BUFFER.push(c);
         }
-    } else {
-        // TO ERR HANDLE
-        Serial.print("Reading failed ");
-        Serial.println(file);
-        IO.close();
-        return onerr;
+        String str = this->_LINE_BUFFER.toString();
+        str.trim();
+        IO.close(); delay(5);
+        this->Ch->pLOG->dev("Reading succeed!!!, file: ", file);
+        return str;
     }
-    String str = this->_LINE_BUFFER.toString();
-    str.trim();
-    IO.close();
-    return str;
+    // TO ERR HANDLE
+    this->Ch->pLOG->dev("Reading failed!!!, file: ", file);
+    IO.close(); delay(5);
+    return onerr;
 }
 
 String SDHandler::getLineString() {
@@ -136,14 +142,13 @@ boolean SDHandler::writeLineFile(String file, String line) {
     // TODO: make this stable (on DataHandle interface)
     File IO = SD.open(file, FILE_WRITE);
     if (IO) {
-        IO.print(line);
-        IO.close();
+        IO.print(line); delay(5);
+        IO.close(); delay(5);
+        this->Ch->pLOG->dev("Writing succeed!!!, file: ", file);
         return true;
     } else {
-        // TOLOG
-        Serial.print("Writing failed ");
-        Serial.println(file);
-        IO.close();
+        this->Ch->pLOG->error("Writing failed!!!, file: ", file);
+        IO.close(); delay(5);
         return false;
     };
 }
@@ -166,25 +171,21 @@ boolean SDHandler::checkReadWrite() {
 /// FILE UTILS
 
 boolean SDHandler::exists(String file) {
-    boolean e = SD.exists(file);
+    boolean e = SD.exists(file); delay(5);
     this->Ch->pLOG->dev("SD.exists(\"", file, "\") = ", e);
     return e;
 }
 
 void SDHandler::mkdir(String file) {
-    if (!this->exists(file)) {
-        this->Ch->pLOG->dev("SD.mkdir(\"", file, "\")");
-        SD.mkdir(file);
-        this->exists(file); // check
-    }
+    SD.mkdir(file); delay(5);
+    this->Ch->pLOG->dev("SD.mkdir(\"", file, "\")");
+    this->exists(file); // check
 }
 
 void SDHandler::remove(String file) {
-    if (this->exists(file)) {
-        SD.rmdir(file);
-        SD.remove(file);
-        this->Ch->pLOG->dev("SD.remove(\"", file, "\")");
-        this->exists(file); // check
-    }
+    SD.rmdir(file); delay(5);
+    SD.remove(file); delay(5);
+    this->Ch->pLOG->dev("SD.remove(\"", file, "\")");
+    this->exists(file); // check
 }
 
