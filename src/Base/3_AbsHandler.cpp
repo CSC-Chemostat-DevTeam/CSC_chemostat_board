@@ -13,6 +13,11 @@ AbsHandler::AbsHandler(Chemostat* Ch){
 }
 
 // ----------------------------------------------------
+// BLOCKING INTERFACE
+void AbsHandler::onBlokingInit(){;}
+void AbsHandler::onBlokingEnd(){;}
+
+// ----------------------------------------------------
 // ENABLE INTERFACE
 void AbsHandler::Enable(boolean flag){
     // Serial.println(">>> At AbsHandler::Enable <<<");

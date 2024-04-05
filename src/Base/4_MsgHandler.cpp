@@ -95,6 +95,19 @@ void MsgHandler::tryReadMsg(unsigned long tout){
     }
 }
 
+void MsgHandler::tryReadMsg(const String& msg){
+    
+    // Serial.println(">>> MsgHandler::tryReadMsg <<<");
+
+    // If non reset called, skip
+    if (this->hasValidMsg()) { return; }
+
+    boolean ok_flag = this->csvline.parseChar(msg);
+    if (!ok_flag) { this->reset(); }
+    if (this->hasValidMsg()) { this->hash = this->msgHash(); }
+}
+
+
 /// -------------------------
 /// RESPONSE INTERFACE
 
@@ -121,47 +134,6 @@ void MsgHandler::closeMsgResponse(){
     this->Ch->pSERIAL->newLine(); 
 }
 
-// /// ----------------------------------------------------
-// /// REQUEST INTERFACE
-
-// String _request_str(String& req) { return "$$$ " + req + " $$$"; }
-// unsigned int _request_hash(String& req) { return crc16_hash(0, req); }
-
-// // [BLOKING]
-// // This will wait for a confirmation
-// // If a new CMd arrive that is not a confirmation it returns
-// // without reseting the reader
-// boolean MsgHandler::request(String req) {
-
-//     // TODO: add bloking interface
-//     SerialHandler* pSERIAL = this->Ch->pSERIAL;
-
-//     // request
-//     String req_str = _request_str(req);
-//     pSERIAL->println("\n", req_str);
-
-//     // wait Confirmation
-//     String req_hash = String(_request_hash(req_str));
-//     boolean ko_flag = false;
-//     for (int i = 0; i < 3; i++) {
-//         this->tryReadMsg(TRY_READ_MSG_TIMEOUT);
-//         if (this->hasValidMsg()) {
-//             if (!this->hasValString("RQCONF")) { return false; }
-//             ko_flag = this->getCmdVal().equals(req_hash);
-//             this->reset(); // If RQCONF reset
-//             break;
-//         }
-//     }
-
-//     if (ko_flag) {
-//         pSERIAL->println(">>> REQUEST: CONFIRMED, req: ", req, ", hash: ", req_hash, " <<<");
-//     } else {
-//         pSERIAL->println(">>> REQUEST: FAILED, req: ", req, ", hash: ", req_hash, " <<<");
-//     }
-
-//     return ko_flag;
-// }
-
 // ----------------------------------------------------
 // CSVLineReader INTERFACE
 
@@ -176,23 +148,6 @@ unsigned int MsgHandler::msgHash(){
 String MsgHandler::msgCsvLineString(){
     return this->csvline.csvLineString();
 }
-
-// String MsgHandler::getCmdKey() {
-//     return this->csvline.getKey();
-// }
-
-// String MsgHandler::getCmdVal() {
-//     return this->csvline.getVal();
-// }
-// String MsgHandler::getCmdVal0() {
-//     return this->csvline.getVal0();
-// }
-// String MsgHandler::getCmdVal1() {
-//     return this->csvline.getVal1();
-// }
-// String MsgHandler::getCmdVal2() {
-//     return this->csvline.getVal2();
-// }
 
 
 // ----------------------------------------------------

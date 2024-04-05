@@ -7,6 +7,9 @@
 #include "Base/4_MsgHandler.h"
 #include "Base/4_SDHandler.h"
 #include "Base/4_LogHandler.h"
+#include "Base/4_LEDHandler.h"
+#include "Base/4_DOHandler.h"
+#include "Base/4_StirrelHandler.h"
 
 // ----------------------------------------------------
 // CONSTRUCTOR
@@ -17,15 +20,21 @@ Chemostat::Chemostat() {
     // HANDLERS
     this->pMSG = new MsgHandler(this); // TODO: [HEAP] Check proper free/delete
     this->pSERIAL = new SerialHandler(this); // TODO: [HEAP] Check proper free/delete
-    this->pSD = new SDHandler(this); // TODO: [HEAP] Check proper free/delete
+    // this->pSD = new SDHandler(this); // TODO: [HEAP] Check proper free/delete
     this->pLOG = new LogHandler(this); // TODO: [HEAP] Check proper free/delete
+    this->pBLED = new LEDHandler(this, LED_BUILTIN); // TODO: [HEAP] Check proper free/delete
+    this->pDO = new DOHandler(this); // TODO: [HEAP] Check proper free/delete
+    this->pSTRR = new StirrelHandler(this); // TODO: [HEAP] Check proper free/delete
 
     /// ALL HANDLERS INTERFACE
     this->_ALL_HANDLERS_BUFFER[0] = NULL;
     this->pushHandler(this->pMSG);
     this->pushHandler(this->pSERIAL);
-    this->pushHandler(this->pSD);
+    // this->pushHandler(this->pSD);
     this->pushHandler(this->pLOG);
+    this->pushHandler(this->pBLED);
+    this->pushHandler(this->pDO);
+    this->pushHandler(this->pSTRR);
 }
 
 //  TODO: Use _ALL_HANDLERS_BUFFER for setting a Chemostat destroyer
@@ -70,7 +79,19 @@ boolean Chemostat::handleMsg() {
         String val3 = pMSG->getValString(3);
         if (!val3.equals("")) { n = val3.toInt();}
         for (int i = 0; i < n; i++) {
-            // pMSG->sendMsgResponse(pMSG->getCmdVal0());
+            pMSG->sendMsgResponse(val2);
+        }
+        return true;
+    }
+
+    // GET-TEST-REPORT
+    // 
+    if (pMSG->hasValString(1, "GET-TEST-REPORT")) {
+        int n = 1;
+        String val2 = pMSG->getValString(2);
+        String val3 = pMSG->getValString(3);
+        if (!val3.equals("")) { n = val3.toInt();}
+        for (int i = 0; i < n; i++) {
             pMSG->sendMsgResponse(val2);
         }
         return true;
@@ -119,6 +140,38 @@ void Chemostat::handleAllMsgs(){
 
 }
 
+void Chemostat::handleBlokingInit(const String& msg){
+    this->pLOG->info("BLOCKING INIT by ", msg);
+
+    // call myself
+    this->onBlokingInit();
+
+    // call all handlers
+    for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
+        if (_ALL_HANDLERS_BUFFER[i] == NULL){ break; }
+        _ALL_HANDLERS_BUFFER[i]->onBlokingInit();
+    }
+}
+
+void Chemostat::handleBlokingEnd(const String& msg){
+    this->pLOG->info("BLOCKING ENDS by ", msg);
+
+    // call myself
+    this->onBlokingEnd();
+
+    // call all handlers
+    for (int i = 0; i < CHEMOSTAT_HANDLERS_BUFFER_SIZE; i++) {
+        if (_ALL_HANDLERS_BUFFER[i] == NULL){ break; }
+        _ALL_HANDLERS_BUFFER[i]->onBlokingEnd();
+    }
+}
+
+
+// ----------------------------------------------------
+// BLOCKING INTERFACE
+void Chemostat::onBlokingInit(){;}
+void Chemostat::onBlokingEnd(){;}
+
 // ----------------------------------------------------
 // ALL HANDLERS INTERFACE
 void Chemostat::pushHandler(AbsHandler* h) {
@@ -159,6 +212,7 @@ void Chemostat::printWelcome() {
     this->sayHi();
     pSERIAL->newLine();
 }
+
     
 void Chemostat::onloop(){
     // Serial.println(">>> Chemostat::onloop <<<");
@@ -174,11 +228,6 @@ void Chemostat::onloop(){
         if (_ALL_HANDLERS_BUFFER[i] == NULL){ break; }
         _ALL_HANDLERS_BUFFER[i]->onloop();
     }
-
-    // DEV
-    this->pSERIAL->println("-----------");
-    this->pLOG->dev("write_test_check: ", this->pSD->checkReadWrite());
-    delay(3000);
 }
 
 // ----------------------------------------------------

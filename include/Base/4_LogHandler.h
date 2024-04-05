@@ -10,7 +10,7 @@
 #include "Base/4_SerialHandler.h"
 
 //  --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-// Handler for logging info/error/dev information
+// Handler for logging dev/info/error information
 //  --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 class LogHandler : 
@@ -32,6 +32,10 @@ class LogHandler :
 
         // ----------------------------------------------------
         // SERIAL LOG INTERFACE
+        // From python doc (https://docs.python.org/3/howto/logging.html)
+        // If the logger’s level is higher than the method call’s, 
+        // no logging message is actually generated. This is the basic mechanism 
+        // controlling the verbosity of logging output.
         // TODO: Use msg interface?
         
         byte getSerialVLevel();
@@ -39,19 +43,12 @@ class LogHandler :
 
         template <typename T0, typename... Ts>
         void _log_serial(T0 tag, Ts... args) { 
-            // if (ml) {
-            //     // Multi liner
-            //     this->Ch->pSERIAL->println(LOG_INIT_TOKEN, "[", this->Ch->nowTimeTag(), "] ", tag, ": ");
-            //     this->Ch->pSERIAL->println(args...);
-            //     this->Ch->pSERIAL->println(LOG_END_TOKEN);
-            // } else {
-                // One liner
-                this->Ch->pSERIAL->println(
-                    LOG_INIT_TOKEN, " ", tag, " [", this->Ch->nowTimeTag(), "]: ", 
-                    args..., 
-                    " ", LOG_END_TOKEN
-                ); 
-            // }
+            // One liner
+            this->Ch->pSERIAL->println(
+                LOG_INIT_TOKEN, " ", tag, " [", this->Ch->nowTimeTag(), "]: ", 
+                args..., 
+                " ", LOG_END_TOKEN
+            );
         }
 
         // ----------------------------------------------------
@@ -74,40 +71,40 @@ class LogHandler :
         
         template <typename T0, typename... Ts>
         void error(T0 arg0, Ts... args) {
-            if (this->serial_vlevel >= LOG_ERROR_LEVEL) { 
+            if (this->serial_vlevel <= LOG_ERROR_LEVEL) { 
                 _log_serial(LOG_ERR_TAG, arg0, args...);
             }
-            if (this->sd_vlevel >= LOG_ERROR_LEVEL) {
+            if (this->sd_vlevel <= LOG_ERROR_LEVEL) {
                 _log_sd(LOG_ERR_TAG, arg0, args...);
             }
         }
 
         template <typename T0, typename... Ts>
         void warn(T0 arg0, Ts... args) {
-            if (this->serial_vlevel >= LOG_WARN_LEVEL) { 
+            if (this->serial_vlevel <= LOG_WARN_LEVEL) { 
                 _log_serial(LOG_WARN_TAG, arg0, args...);
             }
-            if (this->sd_vlevel >= LOG_WARN_LEVEL) { 
+            if (this->sd_vlevel <= LOG_WARN_LEVEL) { 
                 _log_sd(LOG_WARN_TAG, arg0, args...);
             }
         }
 
         template <typename T0, typename... Ts>
         void info(T0 arg0, Ts... args) {
-            if (this->serial_vlevel >= LOG_INFO_LEVEL) { 
+            if (this->serial_vlevel <= LOG_INFO_LEVEL) { 
                 _log_serial(LOG_INFO_TAG, arg0, args...);
             }
-            if (this->sd_vlevel >= LOG_INFO_LEVEL) {
+            if (this->sd_vlevel <= LOG_INFO_LEVEL) {
                 _log_sd(LOG_INFO_TAG, arg0, args...);
             }
         }
 
         template <typename T0, typename... Ts>
         void dev(T0 arg0, Ts... args) {
-            if (this->serial_vlevel >= LOG_DEV_LEVEL) { 
+            if (this->serial_vlevel <= LOG_DEV_LEVEL) { 
                 _log_serial(LOG_DEV_TAG, arg0, args...);
             }
-            if (this->sd_vlevel >= LOG_DEV_LEVEL) {
+            if (this->sd_vlevel <= LOG_DEV_LEVEL) {
                 _log_sd(LOG_DEV_TAG, arg0, args...);
             }
         }

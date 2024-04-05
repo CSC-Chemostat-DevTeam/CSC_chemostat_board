@@ -33,7 +33,7 @@ long _count_pulses(int pin, unsigned long sampling_time) {
     while (true) {
 
         // wait till a HIGH pulse happends and ends
-        pulseIn(pin, HIGH, DO_MAX_PER_PULSE_TIMEOUT_DFLT_VAL);
+        pulseIn(pin, HIGH, 10);
 
         n++;
 

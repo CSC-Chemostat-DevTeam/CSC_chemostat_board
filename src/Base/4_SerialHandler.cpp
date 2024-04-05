@@ -15,7 +15,6 @@ SerialHandler::SerialHandler(Chemostat* Ch) :
 // ----------------------------------------------------
 // SKETCH INTERFACE
 void SerialHandler::onsetup(){ 
-    // Create a Serial System?
     Serial.begin(this->baud_rate);
     while (!Serial) {
         ;  // wait for serial port to connect. Needed for native USB port only

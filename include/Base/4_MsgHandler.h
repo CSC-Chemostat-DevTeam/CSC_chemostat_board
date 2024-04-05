@@ -54,6 +54,7 @@ class MsgHandler :
 			\return void
 		*/
 		void tryReadMsg(unsigned long tout);
+		void tryReadMsg(const String& msg);
 		void reset();
 
 		// unsigned int cmdhash();
@@ -96,9 +97,9 @@ class MsgHandler :
 
 		// ----------------------------------------------------
 		// RESPONSE INTERFACE
-		// Example $RES:MSG-HASH:TIMETAG:RECIEVED%
+		// Example $AKW:MSG-HASH:TIMETAG:RECIEVED%
 		// Example $RES:MSG-HASH:RES_COUNT:BLA:BLE:BLI%
-		// Example $RES:MSG-HASH:TIMETAG:DONE%
+		// Example $AKW:MSG-HASH:TIMETAG:DONE%
 		template <typename T0, typename... Ts>
 		void sendMsgResponse(T0 arg0, Ts... args) {
 			this->sendMsg("RES", this->hash, this->respcount, arg0, args...);
@@ -118,10 +119,6 @@ class MsgHandler :
 				arg0, args...
 			);
 		}
-
-		// ----------------------------------------------------
-		// REQUEST INTERFACE
-		// boolean request(String req);
 };
 
 #endif // CMD_HANDLER_H

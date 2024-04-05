@@ -9,9 +9,9 @@ class MsgHandler;
 class SerialHandler;
 class SDHandler;
 class LogHandler;
-
-// TODO: make a sayHi system for tracking obj pointers
-// To see why they change with time
+class LEDHandler;
+class DOHandler;
+class StirrelHandler;
 
 // TODO: use 'cost' stuff whn required
 
@@ -26,6 +26,9 @@ class Chemostat {
         SerialHandler* pSERIAL;
         SDHandler* pSD;
         LogHandler* pLOG;
+        LEDHandler* pBLED;
+        DOHandler* pDO;
+        StirrelHandler* pSTRR;
 
         // ----------------------------------------------------
         // CONSTRUCTOR
@@ -50,12 +53,22 @@ class Chemostat {
         // TIME INTERFACE
         // Use a clock module if present, otherwise use millis or progress
         String nowTimeTag();
+
+        // ----------------------------------------------------
+        // BLOCKING INTERFACE
+        void onBlokingInit();
+        void onBlokingEnd();
         
         // ----------------------------------------------------
         // HANDLERS INTERFACE
 
         // MSG INTERFACE
         void handleAllMsgs();
+        void handleBlokingInit(const String& msg);
+        void handleBlokingEnd(const String& msg);
+
+        // TODO: Add an handleBlokingInit/End where all handlers are called (by other handler) 
+        // to act upon a blocking event
 
         void pushHandler(AbsHandler* h);
         

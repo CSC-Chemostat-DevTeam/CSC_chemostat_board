@@ -29,14 +29,17 @@
 #define SD_CS_PIN                     53 // FIXXED
 #define HEATER_PIN                    24
 #define SD_SCK_PIN                    52 // FIXXED
-#define DO_LED1_PIN                   43
+#define DO_LED1_PIN                   37
 #define DO_LED2_PIN                   38
 #define STIRREL_PIN                   29 
 #define SD_MOSI_PIN                   51 // FIXXED
 #define SD_MISO_PIN                   50 // FIXXED
-#define DO_LASER_PWD_PIN              7  // PWD
+#define STIRREL_DIR1_PIN              45
+#define STIRREL_DIR2_PIN              46
+#define DO_LASER_PWD_PIN              10  // PWD
 #define HEATER_T_SENSOR_PIN           35
 #define BOTTOM_INTERRUP_PIN           3  
+
 
 // ----------------------------------------------------
 // StaticStrings.h
@@ -60,6 +63,11 @@
 #define CSV_LINE_END_CHAR '%'
 
 // ----------------------------------------------------
+// DOHandler
+#define DO_LASER_PWD_DFLT_VALUE              200  // PROPTO LASER POWER
+#define DO_LED_SAMPLING_TIME                 200  // (ms) led pulse collection time
+
+// ----------------------------------------------------
 // MsgHandler
 
 #define TRY_READ_MSG_TIMEOUT 300 // ms
@@ -76,10 +84,11 @@
 // ----------------------------------------------------
 // LogHandler
 
-#define LOG_ERROR_LEVEL       1
-#define LOG_WARN_LEVEL        2
-#define LOG_INFO_LEVEL        3
-#define LOG_DEV_LEVEL         4
+#define LOG_ERROR_LEVEL       40
+#define LOG_WARN_LEVEL        30
+#define LOG_INFO_LEVEL        20
+#define LOG_DEV_LEVEL         10
+#define LOG_NOTSET_LEVEL      0
 
 #define LOG_INIT_TOKEN ">>>"
 #define LOG_END_TOKEN "<<<"
@@ -89,9 +98,16 @@
 #define LOG_WARN_TAG "WARN"
 #define LOG_DEV_TAG "DEV"
 
-#define LOG_SERIAL_VLEVEL 4
+#define LOG_SERIAL_VLEVEL 10
 #define LOG_SD_VLEVEL 0
 
+
+// ----------------------------------------------------
+// Stirrel
+
+#define STIRREL_PULSE_TIME_DFLT_VAL 300
+#define STIRREL_DIR1_PWD_DFLT_VAL 250
+#define STIRREL_DIR2_PWD_DFLT_VAL 250
 
 // ----------------------------------------------------
 // UTILS

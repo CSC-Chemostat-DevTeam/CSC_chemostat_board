@@ -39,6 +39,12 @@ class AbsHandler {
     virtual void Enable0(boolean flag);
     virtual boolean isEnable();
 
+
+    // ----------------------------------------------------
+    // BLOCKING INTERFACE
+    virtual void onBlokingInit();
+    virtual void onBlokingEnd();
+
     // ----------------------------------------------------
     // MSG INTERFACE
     virtual boolean handleMsg();
